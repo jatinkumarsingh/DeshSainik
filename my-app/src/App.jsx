@@ -138,7 +138,7 @@ function HomePage() {
     return () => observer.disconnect();
   }, []);
   const [region, setRegion] = useState("All");
-  const [category, setCatepgory] = useState("All");
+  const [category, setCategory] = useState("All");
 
   const data = [
     { id: 1, title: "Army GD Rally", region: "North", category: "GD", date: "2025-12-10" },
