@@ -1,0 +1,14 @@
+[
+  {
+    "id": "1763294500013",
+    "email": "jatin.singh2024@nst.rishihood.edu.in",
+    "password": "$2b$10$jfZLYeR7QvRC2A9FrbQLsOxN6614Fk7Dgic52Am0z2e6xnfTpHaJW",
+    "createdAt": "2025-11-16T12:01:40.013Z"
+  },
+  {
+    "id": "1763294530203",
+    "email": "abc@gmail.com",
+    "password": "$2b$10$epAOkNd/W/6cSh3qYBH9O.g9bpPNtzPbuaMEj3/fv6L/.DAjtrEmS",
+    "createdAt": "2025-11-16T12:02:10.203Z"
+  }
+]

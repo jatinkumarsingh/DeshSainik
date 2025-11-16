@@ -1,0 +1,6 @@
+- [x] Remove .git directory from my-app folder
+- [x] Initialize git in the root directory (/Users/jatinkumarsingh/idea)
+- [x] Add GitHub remote origin: https://github.com/jatinkumarsingh/DeshSainik.git
+- [ ] Add all files to git
+- [ ] Commit the changes with message "Initial commit"
+- [ ] Push to the main branch on GitHub
