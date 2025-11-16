@@ -15,9 +15,29 @@ connectDB();
 
 // Middleware
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' ? process.env.FRONTEND_URL : 'http://localhost:8000',
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+
+    const allowedOrigins = [
+      'http://localhost:8000',
+      'http://localhost:4173',
+      'https://desh-sainik.vercel.app'
+    ];
+
+    if (process.env.FRONTEND_URL) {
+      allowedOrigins.push(process.env.FRONTEND_URL);
+    }
+
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
 }));
 app.use(bodyParser.json());
 
