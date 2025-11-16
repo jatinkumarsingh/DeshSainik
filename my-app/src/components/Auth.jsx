@@ -2,6 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
+// Set axios base URL for production
+if (import.meta.env.PROD) {
+  axios.defaults.baseURL = 'https://deshsainik.onrender.com';
+}
+
 const Auth = () => {
   const [isSignIn, setIsSignIn] = useState(true);
   const [formData, setFormData] = useState({

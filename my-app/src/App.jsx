@@ -9,6 +9,11 @@ import Footer from "./components/Footer";
 import Auth from "./components/Auth";
 import axios from 'axios';
 
+// Set axios base URL for production
+if (import.meta.env.PROD) {
+  axios.defaults.baseURL = 'https://deshsainik.onrender.com';
+}
+
 // Lightweight icon stubs so the UI can render without external icon libs.
 const Icon = ({ children, size = 18, className = "" }) => (
   <span className={className} style={{ fontSize: size, display: "inline-flex", alignItems: "center" }}>
