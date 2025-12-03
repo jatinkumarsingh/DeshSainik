@@ -1,109 +1,73 @@
-# Backend API
+# DeshSainik Backend
 
-This is a simple authentication backend built with Express.js, JWT, and bcrypt.
+Backend API for the DeshSainik defence exam preparation platform.
 
-## Features
+## Tech Stack
+- Node.js + Express
+- MongoDB (Atlas)
+- JWT for auth
 
-- User signup
-- User login
-- JWT-based authentication
-- Password hashing with bcrypt
-- File-based user storage (users.json)
+## Setup
 
-## Installation
-
-1. Navigate to the backend directory:
-   ```
-   cd backend
-   ```
-
-2. Install dependencies:
-   ```
-   npm install
-   ```
-
-## Usage
-
-### Development
+```bash
+cd backend
+npm install
 ```
+
+Create `.env` file:
+```
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_secret_key
+PORT=8002
+```
+
+Run the server:
+```bash
 npm run dev
 ```
 
-### Production
-```
-npm start
-```
-
-The server will run on port 5000 by default.
-
 ## API Endpoints
 
-### POST /api/auth/signup
-Register a new user.
+### Auth
+- `POST /api/auth/signup` - Register new user
+- `POST /api/auth/login` - Login
 
-**Request Body:**
-```json
-{
-  "email": "user@example.com",
-  "password": "password123"
-}
+### Courses
+- `GET /api/courses` - Get all courses (supports pagination, search, filter, sort)
+- `GET /api/courses/:id` - Get single course
+- `POST /api/courses` - Create course (auth required)
+- `PUT /api/courses/:id` - Update course (auth required)
+- `DELETE /api/courses/:id` - Delete course (auth required)
+
+### Jobs
+- `GET /api/jobs` - Get all jobs (supports pagination, search, filter, sort)
+- `GET /api/jobs/:id` - Get single job
+- `POST /api/jobs` - Create job (auth required)
+- `PUT /api/jobs/:id` - Update job (auth required)
+- `DELETE /api/jobs/:id` - Delete job (auth required)
+
+## Query Parameters
+
+For courses and jobs listing:
+- `page` - Page number (default: 1)
+- `limit` - Items per page (default: 10)
+- `search` - Search in title/description
+- `category` - Filter by category
+- `sortBy` - Field to sort by
+- `sortOrder` - asc or desc
+
+Example:
+```
+GET /api/courses?page=1&limit=10&search=NDA&category=SSB&sortBy=price&sortOrder=asc
 ```
 
-**Response:**
-```json
-{
-  "message": "User created successfully",
-  "token": "jwt_token_here",
-  "user": {
-    "id": "user_id",
-    "email": "user@example.com"
-  }
-}
+## Folder Structure
 ```
-
-### POST /api/auth/login
-Login an existing user.
-
-**Request Body:**
-```json
-{
-  "email": "user@example.com",
-  "password": "password123"
-}
+backend/
+├── controllers/    # Request handlers
+├── models/         # MongoDB schemas
+├── routes/         # API routes
+├── middlewares/    # Auth middleware
+├── config/         # DB config
+└── server.js       # Entry point
 ```
-
-**Response:**
-```json
-{
-  "message": "Login successful",
-  "token": "jwt_token_here",
-  "user": {
-    "id": "user_id",
-    "email": "user@example.com"
-  }
-}
-```
-
-### GET /api/auth/profile
-Get user profile (requires authentication).
-
-**Headers:**
-```
-Authorization: Bearer jwt_token_here
-```
-
-**Response:**
-```json
-{
-  "user": {
-    "userId": "user_id",
-    "email": "user@example.com"
-  }
-}
-```
-
-## Security Notes
-
-- In production, use environment variables for JWT_SECRET and other sensitive data.
-- Consider using a proper database instead of file storage for production.
-- Implement rate limiting and input validation for better security.

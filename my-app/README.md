@@ -1,16 +1,54 @@
-# React + Vite
+# DeshSainik Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend for the DeshSainik defence exam preparation platform. Built for aspirants preparing for Army, Navy, Air Force, and paramilitary exams.
 
-Currently, two official plugins are available:
+## Tech Stack
+- React 19
+- Vite
+- Tailwind CSS
+- React Router
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Setup
 
-## React Compiler
+```bash
+cd my-app
+npm install
+npm run dev
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Runs on http://localhost:8000
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Course listings with search and filter
+- Job notifications
+- User authentication (signup/login)
+- Control Hub (admin panel) for managing courses and jobs
+- Background video on pages
+- Infinite scroll course sliders
+
+## Pages
+
+- `/` - Home page with course sliders
+- `/auth` - Login/Signup
+- `/admin` - Control Hub (manage courses & jobs)
+
+## Folder Structure
+```
+my-app/
+├── src/
+│   ├── components/
+│   │   ├── StartJourney.jsx   # Main landing page
+│   │   ├── AdminPanel.jsx     # Control Hub
+│   │   ├── Auth.jsx           # Login/Signup
+│   │   └── ...
+│   ├── App.jsx
+│   └── main.jsx
+├── public/
+│   └── dik.mp4                # Background video
+└── index.html
+```
+
+## Backend
+
+Make sure the backend is running on port 8002. API calls are proxied via vite.config.js.

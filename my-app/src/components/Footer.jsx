@@ -3,13 +3,10 @@ import React from 'react';
 const Footer = () => {
   return (
     <footer className="w-full bg-gray-900 text-white py-12 px-6 relative overflow-hidden">
-      {/* Subtle background texture */}
       <div className="absolute inset-0 opacity-10 bg-gradient-to-br from-gray-800 to-gray-900"></div>
 
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* Main Content - Flex layout for organic flow */}
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 mb-10">
-          {/* Company Info - Wider column */}
           <div className="flex-1 space-y-6">
             <div className="flex items-center gap-4">
               <img
@@ -34,9 +31,7 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Links Section - Asymmetrical layout */}
           <div className="flex-1 flex flex-col sm:flex-row gap-8">
-            {/* Quick Links */}
             <div className="flex-1">
               <h4 className="text-lg font-semibold mb-3 text-blue-300">Explore</h4>
               <ul className="space-y-1">
@@ -48,7 +43,6 @@ const Footer = () => {
               </ul>
             </div>
 
-            {/* Services */}
             <div className="flex-1">
               <h4 className="text-lg font-semibold mb-3 text-blue-300">Our Services</h4>
               <ul className="space-y-1">
@@ -59,8 +53,6 @@ const Footer = () => {
                 <li><a href="#" className="text-gray-300 hover:text-white transition-colors text-sm">Community</a></li>
               </ul>
             </div>
-
-            {/* Support */}
             <div className="flex-1">
               <h4 className="text-lg font-semibold mb-3 text-blue-300">Get Help</h4>
               <ul className="space-y-1">
@@ -73,8 +65,6 @@ const Footer = () => {
             </div>
           </div>
         </div>
-
-        {/* Personal Note */}
         <div className="bg-gray-800/50 rounded-lg p-6 mb-8 border-l-4 border-blue-500">
           <blockquote className="text-gray-200 italic text-base leading-relaxed">
             "Every soldier starts as an aspirant. We're honored to be part of your journey
@@ -83,8 +73,6 @@ const Footer = () => {
           </blockquote>
           <cite className="text-gray-400 text-sm mt-2 block">- The DeshSainik Team</cite>
         </div>
-
-        {/* Newsletter - More casual */}
         <div className="bg-gray-800/30 rounded-lg p-6 mb-8">
           <h4 className="text-xl font-semibold mb-3 text-blue-300">Stay in the Loop</h4>
           <p className="text-gray-300 text-sm mb-4 max-w-lg">

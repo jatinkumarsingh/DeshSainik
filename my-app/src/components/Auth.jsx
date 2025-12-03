@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
+import { useNavigate, useLocation } from 'react-router-dom'; 
+import axios from 'axios'; // to call backend api
 
-// Set axios base URL for production
 if (import.meta.env.PROD) {
   axios.defaults.baseURL = 'https://deshsainik.onrender.com';
 }
@@ -55,7 +54,7 @@ const Auth = () => {
         const endpoint = isSignIn ? '/api/auth/login' : '/api/auth/signup';
         const payload = isSignIn
           ? { email: formData.email, password: formData.password }
-          : { email: formData.email, password: formData.password };
+          : { email: formData.email, password: formData.password, name: formData.name };
 
         const response = await axios.post(endpoint, payload);
 

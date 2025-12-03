@@ -49,7 +49,6 @@ const FeaturesAccordion = () => {
     }
   ];
 
-  // Duplicate features for seamless infinite scroll
   const duplicatedFeatures = [...features, ...features];
 
   useEffect(() => {

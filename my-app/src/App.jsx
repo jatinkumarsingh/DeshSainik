@@ -7,24 +7,19 @@ import JobAlerts from "./components/JobAlerts";
 import ContactForm from "./components/ContactForm";
 import Footer from "./components/Footer";
 import Auth from "./components/Auth";
-import axios from 'axios';
+import StartJourney from "./components/StartJourney";
+import AdminPanel from "./components/AdminPanel";
 
-// Set axios base URL for production
-if (import.meta.env.PROD) {
-  axios.defaults.baseURL = 'https://deshsainik.onrender.com';
-}
 
-// Lightweight icon stubs so the UI can render without external icon libs.
 const Icon = ({ children, size = 18, className = "" }) => (
   <span className={className} style={{ fontSize: size, display: "inline-flex", alignItems: "center" }}>
     {children}
   </span>
 );
-
 const Search = (props) => <Icon {...props}>🔍</Icon>;
 const Calendar = (props) => <Icon {...props}>📅</Icon>;
 const User = (props) => <Icon {...props}>👤</Icon>;
-const Globe = (props) => <Icon {...props}>🌐</Icon>;
+const GlobeIcon = (props) => <Icon {...props}>🌐</Icon>;
 const MoreHorizontal = (props) => <Icon {...props}>⋯</Icon>;
 const Bell = (props) => <Icon {...props}>🔔</Icon>;
 
@@ -32,20 +27,14 @@ const Card = ({ children, className = "" }) => (
   <div className={`bg-white/10 backdrop-blur-sm rounded-2xl shadow-xl ${className}`.trim()}>{children}</div>
 );
 
-/**
- * HERO BOX:
- * - "Inside a box" as requested: a centered card with rounded corners and subtle backdrop.
- * - Replace heroBg with your image path if you want the exact screenshot as background.
- */
 function HeroBox() {
-  // change this path to where your screenshot sits (public folder recommended)
-  // Example if you put it in public/images: "/images/hero-screenshot.png"
-  const heroBg = "/images/hero-bg.jpg";
+  const heroBg = "/back.jpg";
+
+  const navigate = useNavigate();
 
   return (
     <div className="w-full flex justify-center px-6">
       <Card className="max-w-6xl w-full p-12 relative overflow-hidden">
-        {/* optional decorative background image inside the card (faint) */}
         <div
           aria-hidden
           className="absolute inset-0"
@@ -58,7 +47,6 @@ function HeroBox() {
             pointerEvents: "none",
           }}
         />
-        {/* overlay to get the dark-blue fade like the screenshot */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#183152]/80 to-[#234365]/70 pointer-events-none" />
 
         <div className="relative z-10 text-center text-white">
@@ -72,13 +60,12 @@ function HeroBox() {
           </p>
 
           <div className="flex items-center justify-center gap-4 mb-12">
-            <a
-              href="#start"
+            <button
+              onClick={() => navigate("/start-journey")}
               className="inline-flex items-center px-6 py-3 rounded-full bg-orange-500 hover:bg-orange-600 text-blue-900 font-semibold shadow-md transition"
             >
               Start Your Journey
-            </a>
-
+            </button>
             <button
               className="inline-flex items-center px-5 py-3 rounded-full border border-white/60 bg-transparent text-white/90 hover:bg-white/5 transition"
             >
@@ -86,7 +73,6 @@ function HeroBox() {
             </button>
           </div>
 
-          {/* stat row */}
           <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16">
             <Stat number="50K+" label="Active Users" />
             <Stat number="1000+" label="Success Stories" />
@@ -113,10 +99,28 @@ function HomePage() {
   const [isVisible, setIsVisible] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
   const headingRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Fine-tuned cache clearing for smooth experience
+    const keysToRemove = [
+      'isAuthenticated',
+      'wastedCookie',
+      'oldSession',
+      'tempData',
+      'unusedKey',
+      // Add any other app-specific or unused keys here
+    ];
+    keysToRemove.forEach((key) => localStorage.removeItem(key));
+    // Optionally clear sessionStorage for app-specific keys
+    if (window.sessionStorage) {
+      ['oldSession', 'tempData', 'unusedKey'].forEach((key) => sessionStorage.removeItem(key));
+    }
+
     const token = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
     if (token && storedUser) {
@@ -145,6 +149,61 @@ function HomePage() {
   const [region, setRegion] = useState("All");
   const [category, setCategory] = useState("All");
 
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    setIsSearching(true);
+    setHasSearched(true);
+
+    try {
+      const response = await fetch('http://localhost:8002/api/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: search,
+          region: region,
+          category: category,
+        }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        setSearchResults(result.data);
+      }
+    } catch (error) {
+      console.error('Search error:', error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  useEffect(() => {
+    // Live search suggestions as user types
+    const trimmedSearch = search.trim();
+    if (trimmedSearch === "") {
+      setSearchResults([]);
+      return;
+    }
+    fetch('http://localhost:8002/api/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: trimmedSearch,
+        region: region,
+        category: category,
+      }),
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.success) {
+          setSearchResults(result.data);
+        } else {
+          setSearchResults([]);
+        }
+      })
+      .catch(() => setSearchResults([]));
+  }, [search, region, category]);
+
   const data = [
     { id: 1, title: "Army GD Rally", region: "North", category: "GD", date: "2025-12-10" },
     { id: 2, title: "Air Force Clerk Exam", region: "South", category: "Clerk", date: "2025-12-15" },
@@ -161,7 +220,6 @@ function HomePage() {
 
   return (
     <>
-      {/* 🧭 Fixed Header */}
       <header className="w-full bg-white border-b fixed top-0 left-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-8 py-7">
           <div className="flex items-center gap-3">
@@ -188,28 +246,30 @@ function HomePage() {
             </a>
           </div>
 
-          <div className="flex-1 mx-6 max-w-xl">
-            {/* prevent full page reload on submit */}
-            <form
-              onSubmit={(e) => e.preventDefault()}
-              className="flex items-center w-full bg-gray-50 border border-gray-200 rounded-full px-3 py-2 shadow-sm"
-            >
-              <Search size={18} className="text-gray-500" />
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                type="text"
-                placeholder="Search here for jobs, results, admit cards..."
-                className="flex-1 px-3 text-sm bg-transparent outline-none text-gray-700"
-              />
-              <button
-                type="submit"
-                className="ml-3 bg-red-600 text-white px-4 py-1.5 text-sm font-semibold rounded-full hover:bg-red-700 transition"
-              >
-                Search
-              </button>
-            </form>
-          </div>
+          <form className="flex-1 mx-6 max-w-xl relative" onSubmit={handleSearch}>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search for jobs, results, admit cards..."
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {searchResults.length > 0 && (
+              <div className="absolute top-full mt-2 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-96 overflow-y-auto z-50">
+                {searchResults.map((result) => (
+                  <div key={result.id} className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0">
+                    <div className="font-medium text-gray-900">{result.title}</div>
+                    <div className="text-sm text-gray-600">{result.category} • {result.region}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+            {search.trim() !== "" && searchResults.length === 0 && (
+              <div className="absolute top-full mt-2 w-full bg-white border border-gray-200 rounded-md shadow-lg p-4 z-50">
+                <p className="text-gray-600 text-center">No results found for "{search}"</p>
+              </div>
+            )}
+          </form>
 
           <nav className="flex items-center gap-4">
             {isAuthenticated ? (
@@ -222,6 +282,7 @@ function HomePage() {
                     localStorage.removeItem('token');
                     localStorage.removeItem('user');
                     localStorage.removeItem('isAuthenticated');
+                    localStorage.clear(); // Clear all cache and cookies
                     setIsAuthenticated(false);
                     setUser(null);
                     navigate('/');
@@ -257,39 +318,58 @@ function HomePage() {
         </div>
       </header>
 
-      {/* Intro Section with Background Video */}
       <section className="relative w-full h-screen overflow-hidden mb-8">
-        {/* Background video - full screen */}
+        <div
+          className="absolute inset-0"
+          style={{ backgroundImage: "url(/back.jpg)", backgroundSize: "cover", backgroundPosition: "center" }}
+        />
         <video
           autoPlay
           loop
           muted
           playsInline
+          preload="none"
+          poster="/back.jpg"
           className="absolute top-0 left-0 w-full h-full object-cover"
-          src="/bg.mp4"
-        />
+          disablePictureInPicture
+          controlsList="nodownload nofullscreen noplaybackrate"
+          onError={(e) => {
+            const el = e.currentTarget;
+            el.style.display = "none";
+          }}
+        >
+          <source src="https://assets.mixkit.co/videos/23593/23593-720.mp4" type="video/mp4" />
+        </video>
 
-        {/* Overlay */}
         <div className="absolute inset-0 bg-black/50" />
 
-        {/* Centered hero box on top of video */}
         <div className="relative z-20 h-full flex items-center justify-center pt-28">
           <HeroBox />
         </div>
       </section>
 
-      {/* Radial Animation Section - Below Background Video */}
       <section className="relative w-full py-8 overflow-hidden" ref={headingRef}>
-        {/* Background Video */}
+        <div
+          className="absolute inset-0"
+          style={{ backgroundImage: "url(/back.jpg)", backgroundSize: "cover", backgroundPosition: "center" }}
+        />
         <video
           autoPlay
           loop
           muted
           playsInline
+          preload="none"
+          poster="/back.jpg"
           className="absolute inset-0 w-full h-full object-cover"
-          src="/op.mp4"
-        />
-        {/* Dark Overlay for text readability */}
+          disablePictureInPicture
+          controlsList="nodownload nofullscreen noplaybackrate"
+          onError={(e) => {
+            const el = e.currentTarget;
+            el.style.display = "none";
+          }}
+        >
+          <source src="/op.mp4" type="video/mp4" />
+        </video>
         <div className="absolute inset-0 bg-black/70" />
 
         <style>{`
@@ -335,29 +415,28 @@ function HomePage() {
         </div>
       </section>
 
-      {/* AI Chatbot Section */}
       <AIChatbot />
 
-      {/* Testimonials Section */}
       <Testimonials />
 
-      {/* Job Alerts Section */}
       <JobAlerts />
 
-      {/* Contact Form Section */}
       <ContactForm />
 
-      {/* Footer */}
       <Footer />
     </>
   );
 }
+
+
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/auth" element={<Auth />} />
+      <Route path="/start-journey" element={<StartJourney />} />
+      <Route path="/admin" element={<AdminPanel />} />
     </Routes>
   );
 }

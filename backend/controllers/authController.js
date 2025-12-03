@@ -5,14 +5,17 @@ require('dotenv').config();
 
 const signup = async (req, res) => {
   try {
+    console.log('Signup request received:', { email: req.body.email, name: req.body.name });
     const { email, password, name } = req.body;
 
     if (!email || !password) {
+      console.log('Validation failed: missing email or password');
       return res.status(400).json({ message: 'Email and password are required' });
     }
 
     const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {
+      console.log('User already exists:', email);
       return res.status(400).json({ message: 'User already exists' });
     }
 
@@ -24,6 +27,7 @@ const signup = async (req, res) => {
     });
 
     await newUser.save();
+    console.log('User created successfully:', newUser.email);
 
     const token = jwt.sign(
       { userId: newUser._id, email: newUser.email },
@@ -37,8 +41,8 @@ const signup = async (req, res) => {
       user: { id: newUser._id, email: newUser.email, name: newUser.name }
     });
   } catch (error) {
-    console.error('Signup error:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error('Signup error details:', error.message, error.stack);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
 
